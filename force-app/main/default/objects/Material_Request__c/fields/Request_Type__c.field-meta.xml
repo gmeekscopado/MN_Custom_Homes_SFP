@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Request_Type__c</fullName>
+    <description>Type of material being requested</description>
+    <label>Request Type</label>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Lumber</fullName>
+                <default>false</default>
+                <label>Lumber</label>
+            </value>
+            <value>
+                <fullName>Concrete</fullName>
+                <default>false</default>
+                <label>Concrete</label>
+            </value>
+            <value>
+                <fullName>Electrical</fullName>
+                <default>false</default>
+                <label>Electrical</label>
+            </value>
+            <value>
+                <fullName>Plumbing</fullName>
+                <default>false</default>
+                <label>Plumbing</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

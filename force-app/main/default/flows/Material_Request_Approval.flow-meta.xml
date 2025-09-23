@@ -3,6 +3,7 @@
     <apiVersion>59.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <description>Approval process for material requests in construction projects</description>
+    <environments>Default</environments>
     <label>Material Request Approval</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -10,13 +11,19 @@
             <stringValue>LightningFlowBuilder</stringValue>
         </value>
     </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordCreates>
         <description>Create approval task</description>
         <name>Create_Approval_Task</name>
         <label>Create Approval Task</label>
-        <locationX>176</locationX>
-        <locationY>134</locationY>
+        <locationX>281</locationX>
+        <locationY>387</locationY>
         <connector>
             <targetReference>Update_Status_Submitted</targetReference>
         </connector>
@@ -39,8 +46,8 @@
         <description>Update status to submitted</description>
         <name>Update_Status_Submitted</name>
         <label>Update Status to Submitted</label>
-        <locationX>176</locationX>
-        <locationY>242</locationY>
+        <locationX>280</locationX>
+        <locationY>630</locationY>
         <inputAssignments>
             <field>Status__c</field>
             <value>
@@ -50,8 +57,8 @@
         <inputReference>$Record</inputReference>
     </recordUpdates>
     <start>
-        <locationX>50</locationX>
-        <locationY>0</locationY>
+        <locationX>124</locationX>
+        <locationY>50</locationY>
         <connector>
             <targetReference>Create_Approval_Task</targetReference>
         </connector>
