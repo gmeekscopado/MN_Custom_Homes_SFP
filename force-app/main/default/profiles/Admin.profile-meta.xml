@@ -22,6 +22,9 @@
     <layoutAssignments>
         <layout>Lead-Formato de candidatos</layout>
     </layoutAssignments>
+    <layoutAssignments>
+        <layout>Material_Request__c-Material Request Layout</layout>
+    </layoutAssignments>
     <loginHours n1:nil="true" />
     <loginIpRanges>
         <description>All</description>
@@ -37,6 +40,10 @@
         <object>Material_Request__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
+    <tabVisibilities>
+        <tab>Material_Request__c</tab>
+        <visibility>Hidden</visibility>
+    </tabVisibilities>
     <userLicense>Salesforce</userLicense>
     <userPermissions>
         <enabled>true</enabled>
