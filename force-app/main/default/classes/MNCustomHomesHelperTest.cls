@@ -1,111 +1,215 @@
 /**
- * Test class for MNCustomHomesHelper
- * Demonstrates comprehensive test coverage for Copado deployment
+ * @description Test class for MNCustomHomesHelper
+ * @author MN Custom Homes Development Team
+ * @date 2025-09-24
+ * @group Test Classes
+ * @see MNCustomHomesHelper
  */
 @isTest
-public class MNCustomHomesHelperTest {
+private class MNCustomHomesHelperTest {
     
-    @testSetup
-    static void setupTestData() {
-        // Create test material requests
-        List<Material_Request__c> testRequests = new List<Material_Request__c>();
-        
-        testRequests.add(new Material_Request__c(
-            Request_Type__c = 'Lumber',
-            Status__c = 'Draft'
-        ));
-        
-        testRequests.add(new Material_Request__c(
-            Request_Type__c = 'Concrete',
-            Status__c = 'Submitted'
-        ));
-        
-        insert testRequests;
-    }
+    /**
+     * @description Test data for square footage calculations
+     */
+    private static final Decimal TEST_SQUARE_FOOTAGE = 2500;
     
+    /**
+     * @description Test data for small square footage
+     */
+    private static final Decimal SMALL_SQUARE_FOOTAGE = 1000;
+    
+    /**
+     * @description Expected budget for test square footage
+     */
+    private static final Decimal EXPECTED_BUDGET = 600000; // 2500 * 200 * 1.2
+    
+    /**
+     * @description Test date for timeline validation
+     */
+    private static final Date TEST_START_DATE = Date.newInstance(2025, 1, 1);
+
+    /**
+     * @description Tests budget calculation with valid square footage
+     */
     @isTest
-    static void testCalculateProjectBudget_ValidSquareFootage() {
+    static void testCalculateProjectBudgetValid() {
+        // Test: Valid square footage calculation
         Test.startTest();
-        
-        // Test with valid square footage
-        Decimal result = MNCustomHomesHelper.calculateProjectBudget(2000);
-        
+        Decimal result = MNCustomHomesHelper.calculateProjectBudget(TEST_SQUARE_FOOTAGE);
         Test.stopTest();
-        
-        // Base: 2000 * $200 = $400,000
-        // Premium: $400,000 * 0.20 = $80,000
-        // Total: $480,000
-        System.assertEquals(480000, result, 'Budget calculation should be correct for 2000 sq ft');
+
+        // Verify: Correct budget calculation (2500 * 200 * 1.2 = 600,000)
+        System.assertEquals(EXPECTED_BUDGET, result, 'Budget calculation should be correct for valid square footage');
     }
-    
+
+    /**
+     * @description Tests budget calculation with null input
+     */
     @isTest
-    static void testCalculateProjectBudget_InvalidInput() {
+    static void testCalculateProjectBudgetNull() {
+        // Test: Null square footage
         Test.startTest();
-        
-        // Test with null input
-        Decimal resultNull = MNCustomHomesHelper.calculateProjectBudget(null);
-        
-        // Test with zero input
-        Decimal resultZero = MNCustomHomesHelper.calculateProjectBudget(0);
-        
-        // Test with negative input
-        Decimal resultNegative = MNCustomHomesHelper.calculateProjectBudget(-100);
-        
+        Decimal result = MNCustomHomesHelper.calculateProjectBudget(null);
         Test.stopTest();
-        
-        System.assertEquals(0, resultNull, 'Null input should return 0');
-        System.assertEquals(0, resultZero, 'Zero input should return 0');
-        System.assertEquals(0, resultNegative, 'Negative input should return 0');
+
+        // Verify: Returns zero for null input
+        System.assertEquals(0, result, 'Budget should be zero for null square footage');
     }
-    
+
+    /**
+     * @description Tests budget calculation with zero input
+     */
     @isTest
-    static void testValidateTimeline_ValidDates() {
+    static void testCalculateProjectBudgetZero() {
+        // Test: Zero square footage
         Test.startTest();
-        
-        Date startDate = Date.today();
-        Date endDate = Date.today().addDays(200); // 200 days (> 180 minimum)
-        
-        Boolean result = MNCustomHomesHelper.validateTimeline(startDate, endDate);
-        
+        Decimal result = MNCustomHomesHelper.calculateProjectBudget(0);
         Test.stopTest();
-        
+
+        // Verify: Returns zero for zero input
+        System.assertEquals(0, result, 'Budget should be zero for zero square footage');
+    }
+
+    /**
+     * @description Tests budget calculation with negative input
+     */
+    @isTest
+    static void testCalculateProjectBudgetNegative() {
+        // Test: Negative square footage
+        Test.startTest();
+        Decimal result = MNCustomHomesHelper.calculateProjectBudget(-100);
+        Test.stopTest();
+
+        // Verify: Returns zero for negative input
+        System.assertEquals(0, result, 'Budget should be zero for negative square footage');
+    }
+
+    /**
+     * @description Tests timeline validation with valid dates
+     */
+    @isTest
+    static void testValidateTimelineValid() {
+        // Setup: Valid timeline (200 days, minimum is 180)
+        Date endDate = TEST_START_DATE.addDays(200);
+
+        // Test: Valid timeline validation
+        Test.startTest();
+        Boolean result = MNCustomHomesHelper.validateTimeline(TEST_START_DATE, endDate);
+        Test.stopTest();
+
+        // Verify: Valid timeline returns true
         System.assertEquals(true, result, 'Valid timeline should return true');
     }
-    
+
+    /**
+     * @description Tests timeline validation with insufficient duration
+     */
     @isTest
-    static void testValidateTimeline_InvalidDates() {
+    static void testValidateTimelineShort() {
+        // Setup: Short timeline (100 days, minimum is 180)
+        Date endDate = TEST_START_DATE.addDays(100);
+
+        // Test: Short timeline validation
         Test.startTest();
-        
-        Date startDate = Date.today();
-        
-        // Test with null dates
-        Boolean resultNullStart = MNCustomHomesHelper.validateTimeline(null, startDate.addDays(200));
-        Boolean resultNullEnd = MNCustomHomesHelper.validateTimeline(startDate, null);
-        
-        // Test with end date before start date
-        Boolean resultEndBeforeStart = MNCustomHomesHelper.validateTimeline(startDate, startDate.addDays(-10));
-        
-        // Test with timeline too short (< 180 days)
-        Boolean resultTooShort = MNCustomHomesHelper.validateTimeline(startDate, startDate.addDays(100));
-        
+        Boolean result = MNCustomHomesHelper.validateTimeline(TEST_START_DATE, endDate);
         Test.stopTest();
-        
-        System.assertEquals(false, resultNullStart, 'Null start date should return false');
-        System.assertEquals(false, resultNullEnd, 'Null end date should return false');
-        System.assertEquals(false, resultEndBeforeStart, 'End before start should return false');
-        System.assertEquals(false, resultTooShort, 'Timeline too short should return false');
+
+        // Verify: Short timeline returns false
+        System.assertEquals(false, result, 'Timeline shorter than minimum should return false');
     }
-    
+
+    /**
+     * @description Tests timeline validation with null start date
+     */
     @isTest
-    static void testMaterialRequestIntegration() {
+    static void testValidateTimelineNullStart() {
+        // Setup: Null start date
+        Date endDate = TEST_START_DATE.addDays(200);
+
+        // Test: Null start date validation
         Test.startTest();
-        
-        // Query test material requests
-        List<Material_Request__c> requests = [SELECT Id, Request_Type__c, Status__c FROM Material_Request__c];
-        
+        Boolean result = MNCustomHomesHelper.validateTimeline(null, endDate);
         Test.stopTest();
-        
-        System.assertEquals(2, requests.size(), 'Should have 2 test material requests');
-        System.assertNotEquals(null, requests[0].Request_Type__c, 'Request type should be populated');
+
+        // Verify: Null start date returns false
+        System.assertEquals(false, result, 'Null start date should return false');
+    }
+
+    /**
+     * @description Tests timeline validation with null end date
+     */
+    @isTest
+    static void testValidateTimelineNullEnd() {
+        // Test: Null end date validation
+        Test.startTest();
+        Boolean result = MNCustomHomesHelper.validateTimeline(TEST_START_DATE, null);
+        Test.stopTest();
+
+        // Verify: Null end date returns false
+        System.assertEquals(false, result, 'Null end date should return false');
+    }
+
+    /**
+     * @description Tests timeline validation with end date before start date
+     */
+    @isTest
+    static void testValidateTimelineReversed() {
+        // Setup: End date before start date
+        Date endDate = TEST_START_DATE.addDays(-10);
+
+        // Test: Reversed timeline validation
+        Test.startTest();
+        Boolean result = MNCustomHomesHelper.validateTimeline(TEST_START_DATE, endDate);
+        Test.stopTest();
+
+        // Verify: Reversed timeline returns false
+        System.assertEquals(false, result, 'End date before start date should return false');
+    }
+
+    /**
+     * @description Tests base cost per square foot getter
+     */
+    @isTest
+    static void testGetBaseCostPerSqft() {
+        // Test: Get base cost constant
+        Test.startTest();
+        Decimal result = MNCustomHomesHelper.getBaseCostPerSqft();
+        Test.stopTest();
+
+        // Verify: Returns expected base cost
+        System.assertEquals(200.0, result, 'Base cost per square foot should be 200.0');
+        System.assertNotEquals(null, result, 'Base cost should not be null');
+    }
+
+    /**
+     * @description Tests premium markup getter
+     */
+    @isTest
+    static void testGetPremiumMarkup() {
+        // Test: Get premium markup constant
+        Test.startTest();
+        Decimal result = MNCustomHomesHelper.getPremiumMarkup();
+        Test.stopTest();
+
+        // Verify: Returns expected premium markup
+        System.assertEquals(0.20, result, 'Premium markup should be 0.20 (20%)');
+        System.assertNotEquals(null, result, 'Premium markup should not be null');
+    }
+
+    /**
+     * @description Tests integration of constants with calculation method
+     */
+    @isTest
+    static void testConstantsIntegration() {
+        // Test: Verify constants are used correctly in calculations
+        Test.startTest();
+        Decimal baseCost = MNCustomHomesHelper.getBaseCostPerSqft();
+        Decimal markup = MNCustomHomesHelper.getPremiumMarkup();
+        Decimal calculatedBudget = MNCustomHomesHelper.calculateProjectBudget(SMALL_SQUARE_FOOTAGE);
+        Test.stopTest();
+
+        // Verify: Manual calculation matches method result
+        Decimal expectedResult = SMALL_SQUARE_FOOTAGE * baseCost * (1 + markup);
+        System.assertEquals(expectedResult, calculatedBudget, 'Constants should integrate correctly with calculation');
     }
 }
